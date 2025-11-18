@@ -7,14 +7,14 @@ $is_admin = isset($_SESSION['admin_id']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Car Store - Buy Your Dream Car</title>
+    <title>gadvision - Buy Your Dream Car</title>
     <link rel="stylesheet" href="<?php echo SITE_URL; ?>css/style.css">
 </head>
 <body>
 <nav class="navbar">
     <div class="nav-container">
         <div class="nav-logo">
-            <h1>🚗 CarStore</h1>
+            <img src="<?php echo SITE_URL; ?>assets/logo.png" alt="gadvision Logo">
         </div>
         <ul class="nav-menu">
             <li><a href="<?php echo SITE_URL; ?>index.php">Home</a></li>

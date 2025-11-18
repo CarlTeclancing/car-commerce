@@ -54,7 +54,7 @@ if ($result->num_rows > 0) {
 <nav class="navbar">
     <div class="nav-container">
         <div class="nav-logo">
-            <h1>🚗 CarStore Admin</h1>
+            <img src="<?php echo SITE_URL; ?>assets/logo.png" alt="gadvision Logo">
         </div>
         <ul class="nav-menu">
             <li><a href="index.php">Dashboard</a></li>

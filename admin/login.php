@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <nav class="navbar">
     <div class="nav-container">
         <div class="nav-logo">
-            <h1>🚗 CarStore Admin</h1>
+            <img src="<?php echo SITE_URL; ?>assets/logo.png" alt="gadvision Logo">
         </div>
     </div>
 </nav>
