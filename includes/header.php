@@ -14,8 +14,9 @@ $is_admin = isset($_SESSION['admin_id']);
 <nav class="navbar">
     <div class="nav-container">
         <div class="nav-logo">
-            <img src="<?php echo SITE_URL; ?>assets/logo.png" alt="gadvision Logo">
+            <a href="<?php echo SITE_URL; ?>"><img src="<?php echo SITE_URL; ?>assets/logo.png" alt="gadvision Logo"></a>
         </div>
+        <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
         <ul class="nav-menu">
             <li><a href="<?php echo SITE_URL; ?>index.php">Home</a></li>
             <li><a href="<?php echo SITE_URL; ?>contacts.php">Contacts</a></li>

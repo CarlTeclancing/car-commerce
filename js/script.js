@@ -100,6 +100,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
 
+    // Mobile nav toggle
+    const navToggle = document.querySelector('.nav-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', function() {
+            const isOpen = navMenu.classList.toggle('is-open');
+            navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+    }
+
     // Add form validation listeners
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {

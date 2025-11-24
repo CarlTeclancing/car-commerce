@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <textarea id="message" name="message" required><?php echo htmlspecialchars($_POST['message'] ?? ''); ?></textarea>
         </div>
 
-        <button type="submit" class="btn">Send Contact Request</button>
+        <button type="submit" class="btn">Buy Car</button>
     </form>
 </div>
 
