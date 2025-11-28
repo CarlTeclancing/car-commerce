@@ -15,10 +15,50 @@ if ($result->num_rows > 0) {
 ?>
 <?php require_once('includes/header.php'); ?>
 
+<div>
+    <form method="GET" action="index.php" class="search-form">
+        <input type="text" name="search" placeholder="Search cars by name, brand, or model" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+        <button type="submit">Search</button>
+    </form>
+</div>
+<div>
+
+    <div>
+        <?php
+        if (isset($_GET['search']) && !empty(trim($_GET['search']))) {
+            $searchTerm = '%' . $conn->real_escape_string(trim($_GET['search'])) . '%';
+            $sql = "SELECT * FROM cars WHERE name LIKE ? OR brand LIKE ? OR model LIKE ? ORDER BY created_at DESC";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("sss", $searchTerm, $searchTerm, $searchTerm);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $cars = array();
+
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $cars[] = $row;
+                }
+            } else {
+                echo '<p>No cars found matching your search criteria.</p>';
+            }
+        }
+        ?>
+    </div>
+</div>
 <div class="page-title">
-    <h2>Welcome to Car Store</h2>
+    <h2>Buy Your Dream Car Today</h2>
     <p>Find your dream car from our collection</p>
 </div>
+<img src="./assets/pexels-mikebirdy-120049.png" alt="bg image" class="img-80">
+    <h1>
+        <?php
+        if (isset($_GET['search']) && !empty(trim($_GET['search']))) {
+            echo 'Search Results for "' . htmlspecialchars(trim($_GET['search'])) . '"';
+        } else {
+            echo 'All Cars';
+        }
+        ?>
+    </h1>
 
 <?php if (!empty($cars)): ?>
     <div class="cars-grid">
@@ -39,7 +79,7 @@ if ($result->num_rows > 0) {
                         <span><?php echo htmlspecialchars($car['fuel_type']); ?></span>
                         <span><?php echo htmlspecialchars($car['transmission']); ?></span>
                     </div>
-                    <p class="car-price">$<?php echo number_format($car['price'], 2); ?></p>
+                    <p class="car-price">CFA :<?php echo number_format($car['price'], 2); ?></p>
                     <a href="car-details.php?id=<?php echo $car['id']; ?>" class="btn btn-block">View Details</a>
                 </div>
             </div>
