@@ -1,113 +1,20 @@
 <?php
-session_start();
 require_once('includes/db.php');
-
-// Get all cars from database
-$sql = "SELECT * FROM cars ORDER BY created_at DESC";
-$result = $conn->query($sql);
-$cars = array();
-
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $cars[] = $row;
-    }
-}
+require_once('includes/header.php');
 ?>
-<?php require_once('includes/header.php'); ?>
 
-<div>
-    <form method="GET" action="index.php" class="search-form">
-        <input type="text" name="search" placeholder="Search cars by name, brand, or model" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-        <button type="submit">Search</button>
-    </form>
-</div>
-<div>
-
-    <div>
-        <?php
-        if (isset($_GET['search']) && !empty(trim($_GET['search']))) {
-            $searchTerm = '%' . $conn->real_escape_string(trim($_GET['search'])) . '%';
-            $sql = "SELECT * FROM cars WHERE name LIKE ? OR brand LIKE ? OR model LIKE ? ORDER BY created_at DESC";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sss", $searchTerm, $searchTerm, $searchTerm);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $cars = array();
-
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $cars[] = $row;
-                }
-            } else {
-                echo '<p>No cars found matching your search criteria.</p>';
-            }
-        }
-        ?>
-    </div>
-</div>
 <div class="page-title">
-    <h2>Reliable Global Car Imports</h2>
-    <p>From Japan & China to the USA and Africa
-Premium vehicles, secure payments, fast delivery, and full transparency from order to arrival.</p>
+    <h2>About GAD Vision Transit</h2>
+    <p>Trusted car import and sales service — transparent, reliable, and customer-focused.</p>
 </div>
-<img src="./assets/pexels-mikebirdy-120049.png" alt="bg image" class="img-80">
-    <h1>
-        <?php
-        if (isset($_GET['search']) && !empty(trim($_GET['search']))) {
-            echo 'Search Results for "' . htmlspecialchars(trim($_GET['search'])) . '"';
-        } else {
-            echo 'All Cars';
-        }
-        ?>
-    </h1>
 
-<?php if (!empty($cars)): ?>
-    <div class="cars-grid">
-        <?php foreach ($cars as $car): ?>
-            <div class="car-card">
-                <div class="car-image">
-                    <?php
-                    $firstImage = '';
-                    if (!empty($car['image'])) {
-                        if (strpos($car['image'], '|') !== false) {
-                            $parts = explode('|', $car['image']);
-                            foreach ($parts as $p) {
-                                $p = trim($p);
-                                if ($p && file_exists('uploads/' . $p)) { $firstImage = $p; break; }
-                            }
-                        } else {
-                            if (file_exists('uploads/' . $car['image'])) $firstImage = $car['image'];
-                        }
-                    }
-                    ?>
-                    <?php if (!empty($firstImage)): ?>
-                        <img src="uploads/<?php echo htmlspecialchars($firstImage); ?>" alt="<?php echo htmlspecialchars($car['name']); ?>">
-                    <?php else: ?>
-                        🚗
-                    <?php endif; ?>
-                </div>
-                <div class="car-info">
-                    <h3><?php echo htmlspecialchars($car['name']); ?></h3>
-                    <p class="car-brand"><?php echo htmlspecialchars($car['brand']); ?> | <?php echo htmlspecialchars($car['model']); ?></p>
-                    <div class="car-specs">
-                        <span>Year: <?php echo $car['year']; ?></span>
-                        <span><?php echo htmlspecialchars($car['fuel_type']); ?></span>
-                        <span><?php echo htmlspecialchars($car['transmission']); ?></span>
-                    </div>
-                    <p class="car-price">$<?php echo number_format($car['price'], 2); ?></p>
-                    <a href="car-details.php?id=<?php echo $car['id']; ?>" class="btn btn-block">View Details</a>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
-<?php else: ?>
-    <div class="empty-state">
-        <h3>No cars available yet</h3>
-        <p>Please check back soon for our latest inventory</p>
-    </div>
-<?php endif; ?>
+<div class="about-content" style="max-width:1200px; margin:0 auto; padding:0 1rem;">
+    <section class="about-hero" style="background:#1a1a1a; padding:1.5rem; border-radius:8px; margin-bottom:1.5rem; border:1px solid #333;">
+        <h3 style="color:#d4af37;">Who we are</h3>
+        <p style="color:#a0a0a0;">GAD Vision Transit helps customers import and purchase quality vehicles with clear contracts, reliable shipping updates, and local agents to complete final transfers securely. Our customers consistently praise our transparency, communication, and professionalism.</p>
+    </section>
 
-<section>
+    <section>
         <h3 class="page-title" style="margin-top:0;">Customer Testimonials</h3>
         <div class="testimonials-grid">
             <div class="testimonial-card">
@@ -211,6 +118,6 @@ Premium vehicles, secure payments, fast delivery, and full transparency from ord
             </div>
         </div>
     </section>
-
+</div>
 
 <?php require_once('includes/footer.php'); ?>

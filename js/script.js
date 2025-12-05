@@ -128,6 +128,55 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Image preview for multiple images input (admin add-car)
+    const imagesInput = document.getElementById('images');
+    const imagePreview = document.getElementById('imagePreview');
+    if (imagesInput && imagePreview) {
+        imagesInput.addEventListener('change', function() {
+            imagePreview.innerHTML = '';
+            const files = Array.from(this.files).slice(0, 8); // limit preview to 8
+            files.forEach(file => {
+                if (!file.type.startsWith('image/')) return;
+                const reader = new FileReader();
+                const wrap = document.createElement('div');
+                wrap.style.width = '90px';
+                wrap.style.height = '70px';
+                wrap.style.overflow = 'hidden';
+                wrap.style.borderRadius = '6px';
+                wrap.style.border = '1px solid #333';
+                wrap.style.background = '#111';
+                const img = document.createElement('img');
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+                wrap.appendChild(img);
+                imagePreview.appendChild(wrap);
+            });
+        });
+    }
+
+    // Gallery thumbnail click behavior (car details)
+    function initGallery() {
+        const mainImage = document.getElementById('mainImage');
+        const thumbs = document.querySelectorAll('.thumb');
+        if (!mainImage || !thumbs.length) return;
+        thumbs.forEach((t, idx) => {
+            t.addEventListener('click', function() {
+                const src = this.querySelector('img').getAttribute('data-src') || this.querySelector('img').src;
+                mainImage.src = src;
+                thumbs.forEach(x => x.classList.remove('active'));
+                this.classList.add('active');
+            });
+            // mark first as active
+            if (idx === 0) t.classList.add('active');
+        });
+    }
+    initGallery();
 });
 
 // Update contact status with AJAX (admin)

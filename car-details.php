@@ -67,8 +67,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="car-detail-container">
     <div class="car-detail-image">
-        <?php if (!empty($car['image']) && file_exists('uploads/' . $car['image'])): ?>
-            <img src="uploads/<?php echo htmlspecialchars($car['image']); ?>" alt="<?php echo htmlspecialchars($car['name']); ?>">
+        <?php
+        // Support multiple images stored as pipe-separated list
+        $images = [];
+        if (!empty($car['image'])) {
+            $parts = explode('|', $car['image']);
+            foreach ($parts as $p) {
+                $p = trim($p);
+                if ($p && file_exists('uploads/' . $p)) {
+                    $images[] = $p;
+                }
+            }
+        }
+        ?>
+
+        <?php if (!empty($images)): ?>
+            <div class="gallery">
+                <div class="gallery-main">
+                    <img id="mainImage" src="uploads/<?php echo htmlspecialchars($images[0]); ?>" alt="<?php echo htmlspecialchars($car['name']); ?>">
+                </div>
+                <?php if (count($images) > 1): ?>
+                    <div class="gallery-thumbs">
+                        <?php foreach ($images as $img): ?>
+                            <div class="thumb"><img src="uploads/<?php echo htmlspecialchars($img); ?>" data-src="uploads/<?php echo htmlspecialchars($img); ?>" alt="thumb"></div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
         <?php else: ?>
             🚗
         <?php endif; ?>

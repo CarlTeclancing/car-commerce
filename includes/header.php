@@ -19,7 +19,8 @@ $is_admin = isset($_SESSION['admin_id']);
         <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
         <ul class="nav-menu">
             <li><a href="<?php echo SITE_URL; ?>index.php">Home</a></li>
-            <li><a href="<?php echo SITE_URL; ?>contacts.php">Contacts</a></li>
+            <li><a href="<?php echo SITE_URL; ?>about.php">About</a></li>
+            <li><a href="<?php echo SITE_URL; ?>contact-us.php">Contact Us</a></li>
             <?php if ($is_admin): ?>
                 <li><a href="<?php echo ADMIN_URL; ?>index.php">Admin Dashboard</a></li>
                 <li><a href="<?php echo ADMIN_URL; ?>logout.php">Logout</a></li>

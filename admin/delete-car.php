@@ -24,11 +24,16 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     $car = $result->fetch_assoc();
     
-    // Delete image file if exists
+    // Delete image file(s) if exists (support multiple images separated by |)
     if (!empty($car['image'])) {
-        $image_path = __DIR__ . '/../uploads/' . $car['image'];
-        if (file_exists($image_path)) {
-            unlink($image_path);
+        $imgs = (strpos($car['image'], '|') !== false) ? explode('|', $car['image']) : [$car['image']];
+        foreach ($imgs as $img) {
+            $img = trim($img);
+            if (!$img) continue;
+            $image_path = __DIR__ . '/../uploads/' . $img;
+            if (file_exists($image_path)) {
+                @unlink($image_path);
+            }
         }
     }
 }

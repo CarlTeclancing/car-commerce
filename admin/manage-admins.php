@@ -95,6 +95,7 @@ if ($result->num_rows > 0) {
             <li><a href="add-car.php">Add Car</a></li>
             <li><a href="manage-contacts.php">Contact Requests</a></li>
             <li><a href="manage-admins.php">Manage Admins</a></li>
+            <li><a href="../about.php">About</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
     </div>

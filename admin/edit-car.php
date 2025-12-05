@@ -55,42 +55,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($price <= 0) {
         $error = 'Please enter a valid price';
     } else {
-        // Handle file upload
-        if (!empty($_FILES['image']['name'])) {
+        // Handle multiple file upload replacement (images[])
+        if (!empty($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
             $target_dir = __DIR__ . '/../uploads/';
-            
+
             if (!is_dir($target_dir)) {
                 mkdir($target_dir, 0755, true);
             }
 
-            $file_name = basename($_FILES['image']['name']);
-            $file_tmp = $_FILES['image']['tmp_name'];
-            $file_size = $_FILES['image']['size'];
-            $file_error = $_FILES['image']['error'];
-
             $allowed = ['jpg', 'jpeg', 'png', 'gif'];
-            $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+            $saved_files = [];
 
-            if ($file_error === 0) {
-                if ($file_size > 5000000) {
-                    $error = 'File size is too large (max 5MB)';
-                } elseif (!in_array($file_ext, $allowed)) {
-                    $error = 'Invalid file type. Only JPG, PNG, GIF allowed.';
-                } else {
-                    // Delete old image
-                    if (!empty($car['image']) && file_exists($target_dir . $car['image'])) {
-                        unlink($target_dir . $car['image']);
-                    }
+            // Upload new files
+            foreach ($_FILES['images']['name'] as $idx => $origName) {
+                if (empty($origName)) continue;
 
-                    $new_file_name = uniqid() . "." . $file_ext;
-                    $target_file = $target_dir . $new_file_name;
+                $file_name = basename($origName);
+                $file_tmp = $_FILES['images']['tmp_name'][$idx];
+                $file_size = $_FILES['images']['size'][$idx];
+                $file_error = $_FILES['images']['error'][$idx];
 
-                    if (move_uploaded_file($file_tmp, $target_file)) {
-                        $image = $new_file_name;
+                $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+                if ($file_error === 0) {
+                    if ($file_size > 5000000) {
+                        $error = 'One of the files is too large (max 5MB each)';
+                        break;
+                    } elseif (!in_array($file_ext, $allowed)) {
+                        $error = 'Invalid file type detected. Only JPG, PNG, GIF allowed.';
+                        break;
                     } else {
-                        $error = 'Error uploading file';
+                        $new_file_name = uniqid() . "." . $file_ext;
+                        $target_file = $target_dir . $new_file_name;
+
+                        if (move_uploaded_file($file_tmp, $target_file)) {
+                            $saved_files[] = $new_file_name;
+                        } else {
+                            $error = 'Error uploading one of the files';
+                            break;
+                        }
                     }
                 }
+            }
+
+            if (empty($error) && !empty($saved_files)) {
+                // Delete old images
+                if (!empty($car['image'])) {
+                    $old = (strpos($car['image'], '|') !== false) ? explode('|', $car['image']) : [$car['image']];
+                    foreach ($old as $o) {
+                        $o = trim($o);
+                        if (!$o) continue;
+                        $p = $target_dir . $o;
+                        if (file_exists($p)) @unlink($p);
+                    }
+                }
+
+                // Save new filenames joined by pipe
+                $image = implode('|', $saved_files);
             }
         }
 
@@ -135,6 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <li><a href="manage-cars.php">Manage Cars</a></li>
             <li><a href="add-car.php">Add Car</a></li>
             <li><a href="manage-contacts.php">Contact Requests</a></li>
+            <li><a href="../about.php">About</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
     </div>
@@ -224,11 +246,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="form-group">
-                <label for="image">Car Image (JPG, PNG, GIF - Max 5MB)</label>
+                <label for="images">Car Images (JPG, PNG, GIF - Max 5MB each) - select to replace existing images</label>
                 <?php if (!empty($car['image'])): ?>
-                    <p><small>Current image: <?php echo htmlspecialchars($car['image']); ?></small></p>
+                    <p><small>Current image(s): <?php echo htmlspecialchars($car['image']); ?></small></p>
                 <?php endif; ?>
-                <input type="file" id="image" name="image" accept=".jpg,.jpeg,.png,.gif">
+                <input type="file" id="images" name="images[]" accept=".jpg,.jpeg,.png,.gif" multiple>
+                <small style="margin-top:0.5rem; display:block; color:#a0a0a0;">Preview:</small>
+                <div id="imagePreview" style="display:flex; gap:0.5rem; margin-top:0.5rem; flex-wrap:wrap;"></div>
             </div>
 
             <button type="submit" class="btn">Update Car</button>
