@@ -177,6 +177,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     initGallery();
+
+    // Small behaviour for chat widget: allow label toggle on click (desktop)
+    const chatWidget = document.querySelector('.chat-widget');
+    if (chatWidget) {
+        const label = chatWidget.querySelector('.chat-label');
+        const btn = chatWidget.querySelector('.chat-btn');
+        // On larger screens clicking the icon toggles the label visibility for easier access
+        if (btn && label) {
+            btn.addEventListener('click', function(e) {
+                // If on mobile, let the link open directly (do not toggle)
+                if (window.innerWidth <= 640) return;
+                e.preventDefault();
+                const isHidden = label.style.display === 'none' || getComputedStyle(label).display === 'none';
+                label.style.display = isHidden ? 'inline-block' : 'none';
+            });
+        }
+    }
 });
 
 // Update contact status with AJAX (admin)
